@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jarvis</title>
+<style>
+body{margin:0;background:#0b1220;color:#e8eefc;font-family:system-ui,sans-serif;padding:20px;max-width:480px;margin:auto}
+h1{text-align:center;letter-spacing:4px}
+.card{background:#131c2f;border-radius:16px;padding:16px;margin:14px 0}
+button,select{width:100%;font-size:18px;padding:16px;border-radius:12px;border:0;margin:6px 0}
+button{background:#4f8cff;color:#fff;font-weight:600}
+select{background:#0b1220;color:#e8eefc}
+#out{min-height:60px;font-size:20px}
+small{color:#93a0bb}
+</style>
+</head>
+<body>
+<h1>JARVIS</h1>
+<div class="card">
+<small>Zubaan chunain</small>
+<select id="lang">
+<option value="en-US">English</option>
+<option value="hi-IN">Hindi</option>
+<option value="ur-PK">Urdu</option>
+</select>
+</div>
+<div class="card">
+<button id="speak">🔊 Jarvis bolay</button>
+<button id="listen">🎤 Main bolta hoon</button>
+</div>
+<div class="card"><small>Jo aap ne kaha:</small><div id="out">...</div></div>
+<small id="status"></small>
+<script>
+const out=document.getElementById('out'),st=document.getElementById('status'),lang=document.getElementById('lang');
+function say(t){
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);
+  u.lang=lang.value;
+  speechSynthesis.speak(u);
+}
+document.getElementById('speak').onclick=()=>say('Hello, I am Jarvis. How can I help you?');
+document.getElementById('listen').onclick=()=>{
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){st.textContent='Chrome use karein.';return}
+  const r=new SR();
+  r.lang=lang.value;
+  r.onstart=()=>{st.textContent='Sun raha hoon... bolain'};
+  r.onresult=e=>{const t=e.results[0][0].transcript;out.textContent=t;say('You said: '+t)};
+  r.onerror=e=>{st.textContent='Error: '+e.error};
+  r.start();
+};
+</script>
+</body>
+</html>
